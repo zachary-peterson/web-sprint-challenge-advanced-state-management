@@ -1,2 +1,2 @@
 export { reducer } from './reducers';
-export { fetchSmurfs } from './actions'
+export { fetchSmurfs, postSmurf } from './actions'

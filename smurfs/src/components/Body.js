@@ -3,50 +3,48 @@ import { connect } from "react-redux";
 import Smurf from './Smurf';
 import axios from 'axios';
 
-import {fetchSmurfs} from '../store';
-import Axios from "axios";
-
-const formSmurf = {
-    name: '',
-    age: '',
-    height: ''
-}
-
-export 
+import {fetchSmurfs, postSmurf} from '../store';
 
 const smurfsAPI = 'http://localhost:3333/smurfs';
 
+const formSmurf = {
+    Name: '',
+    Age: '',
+    Height: ''
+}
+
 const Body = (props) => {
 
-    const [newSmurf, setNewSmurf] = useState({});
-    
-    const handleChanges = e => {
-    setNewSmurf(e.target.value)
+    const [newSmurf, setNewSmurf] = useState(formSmurf);
+    const [formValues, setFormValues] = useState(formSmurf);
+
+    const handleChanges = event => {
+        setNewSmurf({
+            ...newSmurf,
+            [event.target.name]: event.target.value
+        })
     };
-
-    const submitSmurf = () => (dispatch) => {
-
-
-    console.log('RUNNNNNN')
-
-    axios.post(smurfsAPI, newSmurf).then(res =>{
-        dispatch({ type: 'POST_SMURF', payload: res.data})
-    }).catch(err =>{
-        console.dir(err)
-    })
-}
 
     useEffect(() => {
         props.fetchSmurfs();
     }, []);
 
+    console.log(newSmurf)
+
+    const handleSubmit = (evt) => {
+        evt.preventDefault();
+        console.log(newSmurf)
+        props.postSmurf(newSmurf);
+    }
+
     return (
         <section>
             <div>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <label htmlFor='name'>Name:</label>
                     <input 
                         name='name'
+                        id='name'
                         type='text'
                         value={newSmurf.name}
                         onChange={handleChanges}
@@ -56,6 +54,7 @@ const Body = (props) => {
                     <input 
                         name='age'
                         type='text'
+                        id='age'
                         value={newSmurf.age}
                         onChange={handleChanges}
                     />
@@ -63,13 +62,14 @@ const Body = (props) => {
                     <label htmlFor='height'>Height:</label>
                     <input 
                         name='height'
+                        id='height'
                         type='text'
                         value={newSmurf.height}
                         onChange={handleChanges}
                     />
                 </form>
-
-                <button onSubmit={submitSmurf}>Submit</button>
+                    
+                <button onClick={handleSubmit}>Submit</button>
             </div>
             <article>
                 {props.isLoading ? <div>LOADING...</div> : null}
@@ -92,4 +92,4 @@ const mapStateToProps = (state) => {
     };
   };
 
-export default connect(mapStateToProps, { fetchSmurfs })(Body);
+export default connect(mapStateToProps, { fetchSmurfs, postSmurf })(Body);
